@@ -466,8 +466,7 @@
               <nvdDatafeedUrl>http://###:21080/nvdcve-{0}.json.gz</nvdDatafeedUrl> <!-x- Note: {0} will be automatically replaced by the year 2004, 2005, 2006, ... -x->
               -->
               <!-- NOTE: This is required because we do not (yet) use the NVD mirror. Usually this key is supposed to be kept in the mirror only. -->
-              <!--nvdApiKey>###</nvdApiKey-->
-              <nvdApiKey>60f2b7de-ac5f-4343-8473-bee13cf30b21</nvdApiKey>
+              <nvdApiKey>###</nvdApiKey>
               <!-- NOTE: This will prevent errors due to .NET assembly analyzation -->
               <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
             </configuration>
