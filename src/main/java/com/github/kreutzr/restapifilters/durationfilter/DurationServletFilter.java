@@ -34,8 +34,9 @@ import jakarta.servlet.http.HttpServletResponse;
  *       "begin":    "&lt;ISO-8601 time format (as UTC)&gt;",  // e.g. "2025-08-28T20:21:17.000000000Z"
  *       "end":      "&lt;ISO-8601 time format (as UTC)&gt;",  // e.g. "2025-08-28T20:21:19.000000000Z"
  *       "duration": "&lt;ISO-8601 duration (period)&gt;",     // e.g. "PT2S"
- *     },
- *   ]
+ *     }
+ *   ],
+ *     "traceRemovalCount": &lt;int&gt;                        // Optional counter to indicate how many trace entries were removed to avoid exceed the maximum header length. Missing if no trace entry was removed.
  * }
  * </pre>
  * <p/>

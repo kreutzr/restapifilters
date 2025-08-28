@@ -29,8 +29,9 @@ The header value is a JSON string structured as follows:
       "begin":    "<ISO-8601 time format (as UTC)>",  // e.g. "2025-08-28T20:21:17.000000000Z"
       "end":      "<ISO-8601 time format (as UTC)>",  // e.g. "2025-08-28T20:21:19.000000000Z"
       "duration": "<ISO-8601 duration (period)>",     // e.g. "PT2S"
-    },
-  ]
+    }
+  ],
+  "traceRemovalCount": <int>                          // Optional counter to indicate how many trace entries were removed to avoid exceed the maximum header length. Missing if no trace entry was removed.
 }
 ```
 
