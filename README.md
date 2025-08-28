@@ -38,5 +38,29 @@ The header value is a JSON string structured as follows:
  - The name of the custom header is configurable using the key "durationfilter.header-name". The default is "x-duration".
  - The filter may be deactivated by configuring "durationfilter.active" to any value but "true" (case insensitive). The filter is active by default.
  - The maximum header value length may be configured using the key "durationfilter.max-length" as bytes. The default is 16384 (= 16 * 1024 = 16 K).
+ 
+**web.xml**
+```
+<filter>
+  <filter-name>durationfilter</filter-name>
+  <filter-class>com.github.kreutzr.restapifilters.durationfilter.DurationfilterFilter</filter-class>
+  <init-param>
+    <param-name>durationfilter.header-name</param-name>
+    <param-value>x-duration</param-value>
+  </init-param>
+  <init-param>
+    <param-name>durationfilter.active</param-name>
+    <param-value>true</param-value>
+  </init-param>
+  <init-param>
+    <param-name>durationfilter.max-length</param-name>
+    <param-value>16384</param-value>
+  </init-param>
+</filter>
 
+<filter-mapping>
+  <filter-name>durationfilter</filter-name>
+  <url-pattern>/*</url-pattern>
+</filter-mapping>
+```
  
