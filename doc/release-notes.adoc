@@ -1,0 +1,59 @@
+= RestApiFilters
+:encoding: utf-8
+:lang: de
+:!toc:
+
+image::img/restapifilters-logo_320x160.png[ResponseApiFilters]
+
+== V0.0.1 (2025-xx-xx)
+=== Type
+This is a regular maintenance release.
+
+=== Hints
+
+* ...
+
+=== Features / Changes
+
+* ...
+
+=== Bug fixes
+
+* ...
+
+=== External libraries
+
+* ...
+
+=== Known issues
+
+* ...
+
+
+== V0.0.0 (2025-xx-xx)
+=== Type
+This is the initial release.
+
+=== Hints
+
+* ...
+
+=== Features / Changes
+
+* DurationServletFilter added.
+** Configuration `durationfilter.header-name` supported.
+** Configuration `durationfilter.active` supported.
+** Configuration `durationfilter.max-length` supported.
+
+=== Bug fixes
+
+* ...
+
+=== External libraries
+
+* ...
+
+=== Known issues
+
+* ...
+

@@ -1,0 +1,648 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+//
+// mvn clean install -P documentation -P dependency-check -P license-summary -P maven-central
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.github.kreutzr</groupId>
+  <artifactId>restapifilters</artifactId>
+  <version>0.0.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>restapifilters</name>
+  <description>RestApiFilters provides servlet filters that may be used by web (micro) services to return diagnostic information like execution duration and traces through inner service requests.</description>
+  <url>https://github.com/kreutzr/restapifilters</url>
+
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>https://opensource.org/license/mit</url>
+    </license>
+  </licenses>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+
+  <scm>
+   <connection>scm:git:git://github.com/kreutzr/restapifilters.git</connection>
+    <developerConnection>scm:git:ssh://github.com:kreutz/restapifilters.git</developerConnection>
+    <url>https://github.com/kreutzr/restapifilters</url>
+  </scm>
+
+  <developers>
+    <developer>
+      <name>Reinhard Kreutz</name>
+      <email>reinhardkreutz@hotmail.com</email>
+      <organization>com.github.kreutzr</organization>
+      <organizationUrl>https://github.com/kreutzr</organizationUrl>
+    </developer>
+  </developers>
+
+  <properties>
+    <main.basedir>${project.basedir}</main.basedir>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- Versions -->
+    <version.assertj>3.26.3</version.assertj>
+    <version.jackson-databind>2.18.2</version.jackson-databind>
+    <version.junit-jupiter>5.11.3</version.junit-jupiter>
+    <version.lmax.disruptor>3.4.4</version.lmax.disruptor>
+    <version.log4j>2.24.2</version.log4j>
+    <version.servlet>6.1.0</version.servlet>
+    <version.slf4j>2.0.16</version.slf4j>
+
+    <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
+    <build-year>${maven.build.timestamp}</build-year>
+    <build-version>${project.version}</build-version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- JUnit / Mockito-->
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-engine</artifactId>
+        <version>${version.junit-jupiter}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>${version.assertj}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <!-- Slf4j / Log4j -->
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${version.slf4j}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-slf4j2-impl</artifactId>
+        <version>${version.log4j}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-api</artifactId>
+        <version>${version.log4j}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-core</artifactId>
+        <version>${version.log4j}</version>
+      </dependency>
+      <dependency>
+        <!-- Allow asynchronous logging (https://logging.apache.org/log4j/2.x/manual/async.html) -->
+        <groupId>com.lmax</groupId>
+        <artifactId>disruptor</artifactId>
+        <version>${version.lmax.disruptor}</version>
+      </dependency>
+
+      <!-- jakarta.servlet -->
+      <dependency>
+        <groupId>jakarta.servlet</groupId>
+        <artifactId>jakarta.servlet-api</artifactId>
+        <version>${version.servlet}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <!-- Json -->
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>${version.jackson-databind}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.datatype</groupId>
+        <artifactId>jackson-datatype-jsr310</artifactId>
+        <version>${version.jackson-databind}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <!-- JUnit / Mockito -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Slf4j / Log4j -x->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j2-impl</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+    </dependency>
+    <dependency>
+      <!-x- Allow asynchronous logging (https://logging.apache.org/log4j/2.x/manual/async.html) -x->
+      <groupId>com.lmax</groupId>
+      <artifactId>disruptor</artifactId>
+    </dependency>
+    -->
+
+      <!-- jakarta.servlet -->
+      <dependency>
+        <groupId>jakarta.servlet</groupId>
+        <artifactId>jakarta.servlet-api</artifactId>
+      </dependency>
+
+      <!-- Json -->
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.datatype</groupId>
+        <artifactId>jackson-datatype-jsr310</artifactId>
+      </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!--
+        ///////////////////////////////////////////////////
+        //
+        // "build" / "validate" (cycle / phase)
+        //
+        ///////////////////////////////////////////////////
+      -->
+
+      <plugin>
+        <!-- Store build timestamp in property (required for file export) -->
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.5.0</version>
+        <executions>
+          <execution>
+            <id>build-timestamp-execution</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>timestamp-property</goal>
+            </goals>
+            <configuration>
+              <name>build-timestamp</name>
+              <pattern>yyyy-MM-dd'T'HH:mm:ss</pattern>
+              <timeZone>Europe/Zurich</timeZone>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+       <!--
+        ///////////////////////////////////////////////////
+        //
+        // "build" / "generate-resources" (cycle / phase)
+        //
+        ///////////////////////////////////////////////////
+      -->
+
+      <plugin>
+        <!-- Write properties to file (Required for version access by software) -->
+         <groupId>org.codehaus.mojo</groupId>
+         <artifactId>properties-maven-plugin</artifactId>
+         <version>1.2.1</version>
+         <executions>
+           <execution>
+             <phase>generate-resources</phase>
+             <goals>
+               <goal>write-project-properties</goal>
+             </goals>
+             <configuration>
+               <outputFile>${project.build.outputDirectory}/restapifilters.properties</outputFile>
+             </configuration>
+           </execution>
+         </executions>
+      </plugin>
+
+      <plugin>
+        <!-- Replace placeholders in LICENSE file -->
+        <groupId>com.google.code.maven-replacer-plugin</groupId>
+        <artifactId>replacer</artifactId>
+        <version>1.5.3</version>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <goals>
+              <goal>replace</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <file>${basedir}/src/main/resource-templates/LICENSE</file>
+          <outputFile>${basedir}/src/main/resources/LICENSE</outputFile>
+          <replacements>
+            <replacement>
+              <token>&lt;YEAR&gt;</token>
+              <value>${build-year}</value>
+            </replacement>
+            <replacement>
+              <token>&lt;COPYRIGHT HOLDER&gt;</token>
+              <value>Reinhard Kreutz</value>
+            </replacement>
+          </replacements>
+        </configuration>
+      </plugin>
+
+      <!--
+        ///////////////////////////////////////////////////
+        //
+        // "build" / "compile"    (cycle / phase)
+        // "build" / "test-compile" (cycle / phase)
+        //
+        ///////////////////////////////////////////////////
+      -->
+      <plugin>
+        <!-- Compile -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.12.1</version>
+        <configuration>
+          <source>11</source>
+          <target>11</target>
+        </configuration>
+      </plugin>
+
+      <!--
+        ///////////////////////////////////////////////////
+        //
+        // "build" / "test" (cycle / phase)
+        //
+        ///////////////////////////////////////////////////
+      -->
+      <plugin>
+        <!-- Separates the unit tests from the integration tests. -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.2.5</version>
+        <executions>
+          <execution>
+            <id>unit-tests</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <includes>
+                <!-- Include unit tests within (unit) "test" phase. -->
+                 <include>**/*Test.java</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!--
+        ///////////////////////////////////////////////////
+        //
+        // "build" / "verify" (cycle / phase)
+        //
+        ///////////////////////////////////////////////////
+      -->
+      <plugin>
+        <!--
+          License handling
+          - Check if libraries have "illegal" (or not yet handled) license model
+          - Check if license header in source file exists and is correct
+        -->
+        <groupId>com.mycila</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>4.3</version>
+        <configuration>
+          <dependencyEnforce>true</dependencyEnforce>
+          <dependencyExceptionMessage>Illegal licence model found.</dependencyExceptionMessage>
+          <dependencyPolicies>
+            <dependencyPolicy>
+              <type>LICENSE_NAME</type>
+              <rule>APPROVE</rule>
+              <value>The Apache Software License, Version 2.0</value>
+            </dependencyPolicy>
+            <dependencyPolicy>
+              <type>LICENSE_NAME</type>
+              <rule>APPROVE</rule>
+              <value>Apache-2.0</value>
+            </dependencyPolicy>
+
+            <dependencyPolicy>
+              <type>LICENSE_NAME</type>
+              <rule>APPROVE</rule>
+              <value>The BSD 3-Clause License</value>
+            </dependencyPolicy>
+
+            <dependencyPolicy>
+              <type>LICENSE_NAME</type>
+              <rule>APPROVE</rule>
+              <value>MIT License</value>
+            </dependencyPolicy>
+
+            <!-- DENY -->
+            <dependencyPolicy>
+              <type>LICENSE_NAME</type>
+              <rule>DENY</rule> <!-- DENY / APPROVE -->
+              <value>GNU General Public License, version 2</value>
+            </dependencyPolicy>
+          </dependencyPolicies>
+        </configuration>
+
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+
+      </plugin>
+
+      <!--
+        ///////////////////////////////////////////////////
+        //
+        // releasing
+        //
+        ///////////////////////////////////////////////////
+      -->
+      <plugin>
+        <!--
+          Releasing
+        -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>3.0.1</version>
+        <configuration>
+          <tagNameFormat>v@{project.version}</tagNameFormat>
+        </configuration>
+      </plugin>
+
+      <!--
+        ///////////////////////////////////////////////////
+        //
+        // Create fat Jar
+        //
+        ///////////////////////////////////////////////////
+      -->
+      <!--
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.5.1</version>
+        <executions>
+           <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>shade</goal>
+              </goals>
+              <configuration>
+                <transformers>
+                  <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                    <mainClass>com.github.kreutzr.restfilters.ResponseDiff</mainClass>
+                  </transformer>
+                </transformers>
+                <minimizeJar>false</minimizeJar><!-x- True will remove required classes :( -x->
+                <createSourcesJar>false</createSourcesJar> <!-x- NOTE: If we create the source JAR here, the source of ALL 3rd party libraries is added, too. -x->
+              </configuration>
+           </execution>
+        </executions>
+      </plugin>
+      -->
+    </plugins>
+  </build>
+
+  <profiles>
+
+    <profile>
+      <id>dependency-check</id>
+      <build>
+        <plugins>
+          <plugin>
+            <!-- OWASP (vulnerability check) -->
+            <groupId>org.owasp</groupId>
+            <artifactId>dependency-check-maven</artifactId>
+            <version>12.1.3</version>
+            <configuration>
+              <failBuildOnCVSS>4</failBuildOnCVSS>
+              <cveValidForHours>24</cveValidForHours>
+              <!--
+              Skip artifacts not bundled in distribution (Provided and Runtime scope)
+              -x->
+              <skipProvidedScope>true</skipProvidedScope>
+              <skipRuntimeScope>true</skipRuntimeScope>
+              -->
+              <suppressionFiles>
+                <suppressionFile>owasp_cve_security_suppress.xml</suppressionFile>
+              </suppressionFiles>
+              <!-- NOTE: Mirror does only work from version 9.x, so it is not (yet) of use for us (Java8)
+              <nvdDatafeedUrl>http://###:21080/nvdcve-{0}.json.gz</nvdDatafeedUrl> <!-x- Note: {0} will be automatically replaced by the year 2004, 2005, 2006, ... -x->
+              -->
+              <!-- NOTE: This is required because we do not (yet) use the NVD mirror. Usually this key is supposed to be kept in the mirror only. -->
+              <!--nvdApiKey>###</nvdApiKey-->
+              <nvdApiKey>60f2b7de-ac5f-4343-8473-bee13cf30b21</nvdApiKey>
+              <!-- NOTE: This will prevent errors due to .NET assembly analyzation -->
+              <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>license-summary</id>
+      <build>
+        <plugins>
+          <plugin>
+            <!-- Create XML summary of licenses per used library -->
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>license-maven-plugin</artifactId>
+            <version>2.4.0</version>
+            <executions>
+              <execution>
+                <id>download-licenses</id>
+                <phase>prepare-package</phase>
+                <goals>
+                  <!-- For each module (otherwise transformer plugin will fail without XML report folder) -->
+                  <goal>download-licenses</goal>
+                  <!-- For parent -->
+                  <goal>aggregate-download-licenses</goal>
+                </goals>
+                <configuration>
+                  <!-- Many files are stored in ".../generated-resources/licenses/".
+                  The report needs a folder on its own because the xml plugin works on folders only.
+                  -->
+                  <licensesOutputFile>${basedir}/target/generated-resources/licenses/report/licenses.xml</licensesOutputFile>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <!-- Transform XML summary of licenses to HTML -->
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>xml-maven-plugin</artifactId>
+            <version>1.1.0</version>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>transform</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <transformationSets>
+                <transformationSet>
+                  <dir>${basedir}/target/generated-resources/licenses/report/</dir>
+                  <!-- Only the parent holds the XSLT -->
+                  <stylesheet>${maven.multiModuleProjectDirectory}/src/main/resources/licenses.xslt</stylesheet>
+                  <outputDir>${basedir}/target/doc</outputDir>
+                  <fileMappers>
+                    <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
+                      <targetExtension>.html</targetExtension>
+                    </fileMapper>
+                  </fileMappers>
+                </transformationSet>
+              </transformationSets>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>maven-central</id>
+      <build>
+        <plugins>
+          <plugin>
+            <!-- Deploy to maven central via sonatype "ossrh" -->
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <version>1.6.8</version>
+            <extensions>true</extensions>
+            <configuration>
+              <serverId>ossrh</serverId>
+              <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+              <autoReleaseAfterClose>true</autoReleaseAfterClose>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>3.3.1</version>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <!--
+                <phase>verify</phase>
+                -->
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>3.11.2</version>
+            <configuration>
+              <doclint>none</doclint>
+              <show>private</show>
+              <nohelp>true</nohelp>
+            </configuration>
+            <executions>
+              <execution>
+                <id>generate-javadoc</id>
+                <phase>package</phase> <!-- NOTE: The JavaDoc plugin must be executed before the grp plugin starts. Otherwise the javadoc.jar will not be signed, which is required for deployment to maven central. -->
+                <goals>
+                  <goal>javadoc</goal>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>3.2.7</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>net.ju-n.maven.plugins</groupId>
+            <artifactId>checksum-maven-plugin</artifactId>
+            <version>1.4</version>
+            <configuration>
+              <fileSets>
+                <fileSet>
+                  <directory>${basedir}/target/</directory>
+                  <includes>
+                    <include>restapifilters*.jar</include>
+                    <include>restapifilters*.pom</include>
+                  </includes>
+                </fileSet>
+              </fileSets>
+            </configuration>
+            <executions>
+              <execution>
+                <phase>verify</phase>
+                <goals>
+                  <goal>files</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+        </plugins>
+      </build>
+    </profile>
+
+  </profiles>
+</project>
