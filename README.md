@@ -31,14 +31,14 @@ The header value is a JSON string structured as follows:
       "duration": "<ISO-8601 duration (period)>",     // e.g. "PT2S"
     }
   ],
-  "traceRemovalCount": <int>                          // Optional counter to indicate how many trace entries were removed to avoid exceed the maximum header length. Missing if no trace entry was removed.
+  "traceRemovalCount": <int>                          // Optional counter to indicate how many trace entries were removed to avoid exceeding the maximum header length. Missing if no trace entry was removed.
 }
 ```
 
 ## Configuration
  - The name of the custom header is configurable using the key "durationfilter.header-name". The default is "x-duration".
  - The filter may be deactivated by configuring "durationfilter.active" to any value but "true" (case insensitive). The filter is active by default.
- - The maximum header value length may be configured using the key "durationfilter.max-length" as bytes. The default is 16384 (= 16 * 1024 = 16 K).
+ - The maximum header value length may be configured using the key "durationfilter.max-length" as bytes. The default is 16384 (= 16 * 1024 = 16 K). If the maximum header length is exceeded the trace entry of the request that was started latest is removed and thereby not reported.
  
 **web.xml**
 ```

@@ -45,7 +45,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * <ul>
  * <li>The name of the custom header is configurable using the key "durationfilter.header-name". The default is "x-duration".</li>
  * <li>The filter may be deactivated by configuring "durationfilter.active" to any value but "true" (case insensitive). The filter is active by default.</li>
- * <li>The maximum header value length may be configured using the key "durationfilter.max-length" as bytes. The default is 16384 (= 16 * 1024 = 16 K).</li>
+ * <li>The maximum header value length may be configured using the key "durationfilter.max-length" as bytes. The default is 16384 (= 16 * 1024 = 16 K). If the maximum header length is exceeded the trace entry of the request that was started latest is removed and thereby not reported.</li>
  * </ul>
  * */
 public class DurationServletFilter implements Filter
