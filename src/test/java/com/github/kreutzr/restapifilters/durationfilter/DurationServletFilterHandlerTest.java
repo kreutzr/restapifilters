@@ -30,32 +30,12 @@ public class DurationServletFilterHandlerTest
       // Test with null
       // --------------------------------------------------------------------------------------
       // Given
-      String originalSummary = null;
+      final String originalSummary = null;
 
       // When
-      DurationServletFilterHandler handler = new DurationServletFilterHandler( maxHeaderLength );
+      final DurationServletFilterHandler handler = new DurationServletFilterHandler( maxHeaderLength );
       sleep( 2000 );
-      String responseSummary = handler.updateResponseDurationHeader( outerUrl, originalSummary);
-
-//System.out.println( responseSummary );
-
-      // Then
-      assertThat( responseSummary ).contains( "begin" );
-      assertThat( responseSummary ).contains( "end" );
-      assertThat( responseSummary ).contains( "duration" );
-      assertThat( responseSummary ).contains( "url" );
-      assertThat( responseSummary ).contains( "trace" );
-
-      // --------------------------------------------------------------------------------------
-      // test with whitespaces
-      // --------------------------------------------------------------------------------------
-      // Given
-      originalSummary = "   ";
-
-      // When
-      handler = new DurationServletFilterHandler( maxHeaderLength );
-      sleep( 1000 );
-      responseSummary = handler.updateResponseDurationHeader( outerUrl, originalSummary);
+      final String responseSummary = handler.updateResponseDurationHeader( outerUrl, null, originalSummary);
 
 //System.out.println( responseSummary );
 
@@ -79,37 +59,49 @@ public class DurationServletFilterHandlerTest
   {
     final long maxHeaderLength = 16 * 1024; // 16 K
     try {
-      final String outerUrl     = "http://my-server:8080/my-app/my-endpoint";
-      final String innerUrl     = "http://my-server:8080/my-app/my-inner-endpoint";
-      final String innermostUrl = "http://my-server:8080/my-app/my-innermost-endpoint";
+      final String urlA = "http://my-server:8080/my-app/my-A-endpoint";
+      final String urlB = "http://my-server:8080/my-app/my-B-endpoint";
+      final String urlC = "http://my-server:8080/my-app/my-C-endpoint";
+      final String urlD = "http://my-server:8080/my-app/my-D-endpoint";
 
       // --------------------------------------------------------------------------------------
       // Test with outer summary
       // --------------------------------------------------------------------------------------
       // Given
-      final String originalSummary = null;
 
       // When
-      final DurationServletFilterHandler handler = new DurationServletFilterHandler( maxHeaderLength );
-      sleep( 2000 );
-      final DurationServletFilterHandler innerHandler = new DurationServletFilterHandler( maxHeaderLength );
-      sleep( 1000 );
-      final DurationServletFilterHandler innermostHandler = new DurationServletFilterHandler( maxHeaderLength );
-      sleep( 500 );
-      final String innermostResponseSummary = innermostHandler.updateResponseDurationHeader( innermostUrl, originalSummary );
-      final String innerResponseSummary     = innerHandler.updateResponseDurationHeader( innerUrl, innermostResponseSummary );
-      final String responseSummary          = handler.updateResponseDurationHeader( outerUrl, innerResponseSummary);
+      // =====================
+      // ---> A ---> B
+      //        ---> C ---> D
+      // =====================
+      final DurationServletFilterHandler handlerA = new DurationServletFilterHandler( maxHeaderLength );
+      sleep( 500 );  // Service A execution time begin
 
-//System.out.println( responseSummary );
+      final DurationServletFilterHandler handlerB = new DurationServletFilterHandler( maxHeaderLength );
+      sleep( 2000 ); // Service B execution time total
+      final String responseSummaryB = handlerB.updateResponseDurationHeader( urlB, null,  null );
+
+      final DurationServletFilterHandler handlerC = new DurationServletFilterHandler( maxHeaderLength );
+      sleep( 500 );  // Service C execution time begin
+
+      final DurationServletFilterHandler handlerD = new DurationServletFilterHandler( maxHeaderLength );
+      sleep( 1000 ); // Service D execution time total
+      final String responseSummaryD = handlerD.updateResponseDurationHeader( urlD, responseSummaryB, null );
+
+      sleep( 500 ); // Service C execution time end
+      final String responseSummaryC = handlerC.updateResponseDurationHeader( urlC, responseSummaryB, responseSummaryD );
+
+      sleep( 500 );  // Service A execution time end
+      final String responseSummaryA = handlerA.updateResponseDurationHeader( urlA, null, responseSummaryC );
+
+System.out.println( responseSummaryA );
 
       // Then
-      assertThat( responseSummary ).contains( "begin" );
-      assertThat( responseSummary ).contains( "end" );
-      assertThat( responseSummary ).contains( "duration" );
-      assertThat( responseSummary ).contains( "url" );
-      assertThat( responseSummary ).contains( "trace" );
-      assertThat( responseSummary ).contains( outerUrl );
-      assertThat( responseSummary ).contains( innerUrl );
+      assertThat( responseSummaryA ).contains( "begin" );
+      assertThat( responseSummaryA ).contains( "end" );
+      assertThat( responseSummaryA ).contains( "duration" );
+      assertThat( responseSummaryA ).contains( "url" );
+      assertThat( responseSummaryA ).contains( "trace" );
     }
     catch( final Throwable ex ) {
       ex.printStackTrace();

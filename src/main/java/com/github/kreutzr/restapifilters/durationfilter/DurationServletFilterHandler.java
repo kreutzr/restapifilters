@@ -39,23 +39,49 @@ public class DurationServletFilterHandler
   /**
    * Updates the duration header value (DurationInfoSummary as JSON) of the current response.
    * @param requestUrl The URL of the current request. Must not be null.
-   * @param responseSummaryJson The duration header value of the current response. Must not be null.
+   * @param requestSummaryJson The duration header value of the current request. May be null.
+   * @param responseSummaryJson The duration header value of the current response. May be null.
    * @return The updated duration header value. Never null.
    * @throws IOException
    */
-  public String updateResponseDurationHeader( final String requestUrl, final String responseSummaryJson )
+  public String updateResponseDurationHeader( final String requestUrl, final String requestSummaryJson, final String responseSummaryJson )
   throws IOException
   {
     final Instant end = Instant.now();
 
     DurationInfoSummary summary = null;
-    if( responseSummaryJson == null || responseSummaryJson.isBlank() ) {
-      // Start with empty request duration summary if duration header is not set.
-      summary = new DurationInfoSummary();
-    }
-    else {
+    if( responseSummaryJson != null ) {
+      // (A) Response summaries are the most recent
       summary = JsonHelper.provideObjectMapper().readValue( responseSummaryJson, DurationInfoSummary.class );
     }
+    else if( requestSummaryJson != null ) {
+      // (B) Request summaries are better than nothing
+      summary = JsonHelper.provideObjectMapper().readValue( requestSummaryJson, DurationInfoSummary.class );
+    }
+    else {
+      // (C) Start with empty summary.
+      summary = new DurationInfoSummary();
+    }
+
+    // ================================================================================================================
+    //
+    //   /          /                        // We start with no request duration headers.
+    // -----> [a] -----> [b]
+    //         |          |
+    //         |     b    |  (C)             // No response duration header is returned (due to missing sub requests).
+    //         | <---------                  //  Therefore initialize with local trace.
+    //         |
+    //         |                             // IMPORTANT: Received response duration header MUST be passed
+    //         |                             //   as request header for sibling requests!
+    //         |    b          b
+    //         | ------> [c] -----> [d]
+    //                               |
+    //  abcd       bcd         bd    |  (B)  // No response duration header is returned (due to missing sub requests).
+    // <------   <------     <--------       //  Therefore use the request duration header to append a trace.
+    //
+    //   (A)                                 // Response duration header is extended with local trace.
+    //
+    // ================================================================================================================
 
     // Create and append a trace entry if this request is an inner request.
     final DurationInfo traceEntry = new DurationInfo();
