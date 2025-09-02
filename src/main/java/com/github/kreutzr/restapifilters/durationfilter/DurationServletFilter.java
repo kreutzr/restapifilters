@@ -24,7 +24,7 @@ import jakarta.servlet.http.HttpServletResponse;
  *   "duration": "&lt;ISO-8601 duration (period)&gt;",         // e.g. "PT10S"
  *   "trace": [                                          // A list that holds all executed requests ordered by their begin time.
  *     {
- *       "url":      "&lt;URL of inner request&gt;",           // e.g. "https://my-server:8080/my-app/my-endpoint"
+ *       "url":      "&lt;URL of the request&gt;",             // e.g. "https://my-server:8080/my-app/my-endpoint"
  *       "begin":    "&lt;ISO-8601 time format (as UTC)&gt;",  // e.g. "2025-08-28T20:21:15.000000000Z"
  *       "end":      "&lt;ISO-8601 time format (as UTC)&gt;",  // e.g. "2025-08-28T20:21:25.000000000Z"
  *       "duration": "&lt;ISO-8601 duration (period)&gt;",     // e.g. "PT10S"

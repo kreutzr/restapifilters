@@ -67,7 +67,13 @@ public class DurationServletFilterHandler
     if( summary.trace == null ) {
       summary.trace = new ArrayList< DurationInfo >();
     }
-    insertByBegin( summary.trace, traceEntry );
+    if( summary.traceRemovalCount == null ) {
+      insertByBegin( summary.trace, traceEntry );
+    }
+    else {
+      // We do not add any more entries to avoid disturbing the order (e.g. after an entry with a long url was removed but a later entry with a shorter url is added).
+      summary.traceRemovalCount = summary.traceRemovalCount + 1;
+    }
 
     // Finalize the "outermost" request by setting end and duration.
     summary.begin    = begin_;
@@ -82,12 +88,10 @@ public class DurationServletFilterHandler
 
     // Set updated duration header to response.
     String summaryString = JsonHelper.provideObjectMapper().writeValueAsString( summary );
-    if( summaryString.length() > maxHeaderLength_ ) {
+    if( summary.traceRemovalCount == null && summaryString.length() > maxHeaderLength_ ) {
       // Remove latest (innermost) trace information.
       summary.trace.remove( summary.trace.size() - 1 );
-      summary.traceRemovalCount = summary.traceRemovalCount == null
-        ? 1
-        : summary.traceRemovalCount + 1;
+      summary.traceRemovalCount = 1;
       summaryString = JsonHelper.provideObjectMapper().writeValueAsString( summary );
     }
 
