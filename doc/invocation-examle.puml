@@ -1,0 +1,15 @@
+@startuml
+participant "Client"    as client
+participant "Service A" as A
+participant "Service B" as B
+participant "Service C" as C
+participant "Service D" as D
+client -> A : empty 
+A      -> B : empty
+B      --> A : b
+A      -> C : b
+C      -> D : b
+D      --> C : bd
+C      --> A : bcd
+A      --> client : abcd
+@enduml

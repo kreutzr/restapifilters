@@ -4,7 +4,7 @@
 :toc: left
 :toclevels: 5
 
-image::img/restapifilters-logo_320x160.png[ResponseDiff]
+image::img/restapifilters-logo_320x160.png[RestApiFilters]
 
 == Was bietet RestApiFilters?
 
@@ -19,9 +19,20 @@ RestApiFilters benötigt Java in einer Version 11 oder höher.
 
 Der DurationServletFilter misst die Gesamtausführungsdauer eines Aufrufs und ggfs. die der Aufrufe, die während des Aufrufs vom Service selbst initiiert werden.
 
-Die Aufrufdaten werden als JSON-Struktur in einem konfigurierbaren Response-Header zurück geliefert. Der name des Headers is per Default `x-duration`.
+[NOTE]
+====
+Damit interne Serviceaufrufe korrekt aufgenommen werden können, muss ein eingehender Header-Wert an den ausgehenden internen Aufruf im Request weitergegeben werden. *(Service A -> Service B und Service C -> Service D)*
 
-.Beispiel `x-duration` Struktur
+Der vom internen Aufruf zurückgegebene Response-Header-Wert muss dem nachfolgenden internen Aufruf im Request weitergereicht werden. *(Service A -> Service C)*
+
+Dieses Weiterreichen wird solange fortgesetzt bis kein weiterer interner Aufruf mehr erfolgt. In diesem Fall wird der zuletzt empfangene Response-Header-Wert im Response des aktuellen Service selbst als Response-Header-Wert übergeben. *(Service D -> Service C, Service C -> Service A -> und Service A -> Client)*
+
+image::img/invocation-example.png[]
+====
+
+Die Aufrufdaten werden als JSON-Struktur in einem konfigurierbaren Response-Header zurück geliefert. Der Name des Headers is per Default `x-duration`.
+
+.Beispiel `x-duration` JSON-Struktur
 ====
 [source,json]
 ----
