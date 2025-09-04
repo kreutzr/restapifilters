@@ -77,7 +77,7 @@ The filter can be configured as follows:
 
 .Example web.xml
 ====
-[source,json]
+[source,xml]
 ----
 <filter>
   <filter-name>durationtracefilter</filter-name>
