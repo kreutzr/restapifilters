@@ -33,7 +33,7 @@ image::img/invocation-example.png[]
 
 The invocation data is returned as a JSON structure in a configurable response header. The header name is `x-duration` by default.
 
-.Example `x-duration` JSON structure
+.JSON structure
 ====
 [source,json]
 ----
@@ -75,7 +75,7 @@ The filter can be configured as follows:
 
 ==== web.xml
 
-.Example web.xml
+.web.xml
 ====
 [source,xml]
 ----

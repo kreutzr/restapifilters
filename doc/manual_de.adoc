@@ -32,7 +32,7 @@ image::img/invocation-example.png[]
 
 Die Aufrufdaten werden als JSON-Struktur in einem konfigurierbaren Response-Header zurück geliefert. Der Name des Headers is per Default `x-duration`.
 
-.Beispiel `x-duration` JSON-Struktur
+.JSON-Struktur
 ====
 [source,json]
 ----
@@ -74,7 +74,7 @@ Der Filter kann wie folgt konfiguriert werden:
 
 ==== web.xml
 
-.Beispiel web.xml
+.web.xml
 ====
 [source,xml]
 ----
