@@ -41,10 +41,11 @@ public class DurationServletFilterHandler
    * @param requestUrl The URL of the current request. Must not be null.
    * @param requestSummaryJson The duration header value of the current request. May be null.
    * @param responseSummaryJson The duration header value of the current response. May be null.
+   * @param httpStatus The response HTTP status.
    * @return The updated duration header value. Never null.
    * @throws IOException
    */
-  public String updateResponseDurationHeader( final String requestUrl, final String requestSummaryJson, final String responseSummaryJson )
+  public String updateResponseDurationHeader( final String requestUrl, final String requestSummaryJson, final String responseSummaryJson, final int httpStatus )
   throws IOException
   {
     final Instant end = Instant.now();
@@ -85,10 +86,11 @@ public class DurationServletFilterHandler
 
     // Create and append a trace entry if this request is an inner request.
     final DurationInfo traceEntry = new DurationInfo();
-    traceEntry.url      = requestUrl;
-    traceEntry.begin    = begin_;
-    traceEntry.end      = end;
-    traceEntry.duration = Duration.between( traceEntry.begin, traceEntry.end );
+    traceEntry.url        = requestUrl;
+    traceEntry.begin      = begin_;
+    traceEntry.end        = end;
+    traceEntry.duration   = Duration.between( traceEntry.begin, traceEntry.end );
+    traceEntry.httpstatus = httpStatus;
 
     if( summary.trace == null ) {
       summary.trace = new ArrayList< DurationInfo >();

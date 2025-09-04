@@ -101,7 +101,8 @@ public class DurationServletFilter implements Filter
       httpResponse.setHeader( headerName_, handler.updateResponseDurationHeader(
         httpRequest.getRequestURL().toString(),
         httpRequest.getHeader( headerName_ ),
-        httpResponse.getHeader( headerName_ )
+        httpResponse.getHeader( headerName_ ),
+        httpResponse.getStatus()
       ) );
     }
   }

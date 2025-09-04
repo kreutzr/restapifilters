@@ -42,19 +42,21 @@ Die Aufrufdaten werden als JSON-Struktur in einem konfigurierbaren Response-Head
   "duration": ""PT10S" <3>,
   "trace": [ <4>
     {
-      "url":      "https://my-server:8080/my-app/my-endpoint", <5>
-      "begin":    "2025-08-28T20:21:15.000000000Z",
-      "end":      "2025-08-28T20:21:25.000000000Z",
-      "duration": "PT10S"
+      "begin":      "2025-08-28T20:21:15.000000000Z",
+      "end":        "2025-08-28T20:21:25.000000000Z",
+      "duration":   "PT10S",
+      "url":        "https://my-server:8080/my-app/my-endpoint", <5>
+      "httpstatus": 200 <6>
     },
     {
-      "url":      "https://my-server:8080/my-app/my-inner-endpoint",
       "begin":    "2025-08-28T20:21:17.000000000Z",
       "end":      "2025-08-28T20:21:19.000000000Z",
-      "duration": "PT2S"
+      "duration": "PT2S",
+      "url":      "https://my-server:8080/my-app/my-inner-endpoint",
+      "httpstatus": 404
     }
   ],
-  "traceRemovalCount": 1 <6>
+  "traceRemovalCount": 1 <7>
 }
 ----
 <1> Der Zeitpunkt zu dem der Request einging (gemäß link:https://de.wikipedia.org/wiki/ISO_8601[ISO_8601]).
@@ -62,10 +64,11 @@ Die Aufrufdaten werden als JSON-Struktur in einem konfigurierbaren Response-Head
 <3> Die Differenzdauer zwischen `end` und `begin` (gemäß link:https://de.wikipedia.org/wiki/ISO_8601[ISO_8601]).
 <4> Eine Liste mit allen ausgeführten Requests - inklusive eventuell intern ausgelöster Requests. Die Liste ist sortiert nach dem Zeitstempel des Request-Eingangs.
 <5> Die URL der jeweiligen Requests.
-<6> Ein optionaler Indikator, der angibt, wie viele interne Requests nicht in der `trace`-Liste aufgeführt wurden, da andernfalls die Maximallänge des Header-Werts überschritten worden wäre.
+<6> Der HTTP-Status des Response auf einen internen Request.u
+<7> Ein optionaler Indikator, der angibt, wie viele interne Requests nicht in der `trace`-Liste aufgeführt wurden, da andernfalls die Maximallänge des Header-Werts überschritten worden wäre.
 ====
 
-=== Konfiguration
+=== Konfigurationn
 
 Der Filter kann wie folgt konfiguriert werden:
 
