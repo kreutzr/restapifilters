@@ -1,9 +1,9 @@
-package com.github.kreutzr.restapifilters.durationfilter;
+package com.github.kreutzr.restapifilters.durationtracefilter;
 
 import java.time.Duration;
 import java.time.Instant;
 
-public class DurationInfo
+public class DurationTraceInfo
 {
   public Instant  begin;          // The time (UTC) the request arrived.
   public Instant  end;            // The time (UTC) the response left.

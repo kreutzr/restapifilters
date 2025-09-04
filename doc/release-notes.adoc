@@ -40,12 +40,13 @@ This is the initial release.
 
 === Features / Changes
 
-* DurationServletFilter added.
-** Configuration `durationfilter.header-name` supported.
-** Configuration `durationfilter.active` supported.
-** Configuration `durationfilter.max-length` supported.
+* DurationTraceFilter added.
+** Configuration `durationtracefilter.header-name` supported.
+** Configuration `durationtracefilter.active` supported.
+** Configuration `durationtracefilter.max-length` supported.
 ** Inner request trace supported.
 ** HTTP status added to trace information set.
+* Manuals provided in german and english.
 
 === Bug fixes
 

@@ -1,4 +1,4 @@
-package com.github.kreutzr.restapifilters.durationfilter;
+package com.github.kreutzr.restapifilters.durationtracefilter;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -11,9 +11,9 @@ import com.github.kreutzr.restapifilters.tools.JsonHelper;
 
 /**
  * Since ServletRequest and ServletResponse can not easily be mocked, the filter logic was moved to this testable handler class.
- * Only reading and setting the duration header value remains within the servlet filter itself.
+ * Only reading and setting the duration header value remains within the filter itself.
  */
-public class DurationServletFilterHandler
+public class DurationTraceFilterHandler
 {
   private static Duration lastFinalisationDuration_ = Duration.ZERO;
 
@@ -28,7 +28,7 @@ public class DurationServletFilterHandler
    * Constructor
    * @param maxLength The maximum header length in bytes. If the header length exceeds this length the trace list is reduced.
    */
-  public DurationServletFilterHandler( final long maxLength )
+  public DurationTraceFilterHandler( final long maxLength )
   {
     begin_           = Instant.now();
     maxHeaderLength_ = maxLength;
@@ -50,18 +50,18 @@ public class DurationServletFilterHandler
   {
     final Instant end = Instant.now();
 
-    DurationInfoSummary summary = null;
+    DurationTraceInfoSummary summary = null;
     if( responseSummaryJson != null ) {
       // (A) Response summaries are the most recent
-      summary = JsonHelper.provideObjectMapper().readValue( responseSummaryJson, DurationInfoSummary.class );
+      summary = JsonHelper.provideObjectMapper().readValue( responseSummaryJson, DurationTraceInfoSummary.class );
     }
     else if( requestSummaryJson != null ) {
       // (B) Request summaries are better than nothing
-      summary = JsonHelper.provideObjectMapper().readValue( requestSummaryJson, DurationInfoSummary.class );
+      summary = JsonHelper.provideObjectMapper().readValue( requestSummaryJson, DurationTraceInfoSummary.class );
     }
     else {
       // (C) Start with empty summary.
-      summary = new DurationInfoSummary();
+      summary = new DurationTraceInfoSummary();
     }
 
     // ================================================================================================================
@@ -85,7 +85,7 @@ public class DurationServletFilterHandler
     // ================================================================================================================
 
     // Create and append a trace entry if this request is an inner request.
-    final DurationInfo traceEntry = new DurationInfo();
+    final DurationTraceInfo traceEntry = new DurationTraceInfo();
     traceEntry.url        = requestUrl;
     traceEntry.begin      = begin_;
     traceEntry.end        = end;
@@ -93,7 +93,7 @@ public class DurationServletFilterHandler
     traceEntry.httpstatus = httpStatus;
 
     if( summary.trace == null ) {
-      summary.trace = new ArrayList< DurationInfo >();
+      summary.trace = new ArrayList< DurationTraceInfo >();
     }
     if( summary.traceRemovalCount == null ) {
       insertByBegin( summary.trace, traceEntry );
@@ -137,7 +137,7 @@ public class DurationServletFilterHandler
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  private void insertByBegin( final List< DurationInfo > trace,  DurationInfo traceEntry )
+  private void insertByBegin( final List< DurationTraceInfo > trace,  DurationTraceInfo traceEntry )
   {
     int i=0;
     while( i < trace.size() ) {

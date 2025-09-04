@@ -15,9 +15,9 @@ RestApiFilters stellt Filter bereit, um in Tests oder auch in Produktion Kennzah
 === Java
 RestApiFilters benötigt Java in einer Version 11 oder höher.
 
-== DurationServletFilter
+== DurationTraceFilter
 
-Der DurationServletFilter misst die Gesamtausführungsdauer eines Aufrufs und ggfs. die der Aufrufe, die während des Aufrufs vom Service selbst initiiert werden.
+Der DurationTraceFilter misst die Gesamtausführungsdauer eines Aufrufs und ggfs. die der Aufrufe, die während des Aufrufs vom Service selbst initiiert werden. Zudem erfasst er die HTTP-Status aller Antworten auf interne Aufrufe.
 
 [NOTE]
 ====
@@ -64,7 +64,7 @@ Die Aufrufdaten werden als JSON-Struktur in einem konfigurierbaren Response-Head
 <3> Die Differenzdauer zwischen `end` und `begin` (gemäß link:https://de.wikipedia.org/wiki/ISO_8601[ISO_8601]).
 <4> Eine Liste mit allen ausgeführten Requests - inklusive eventuell intern ausgelöster Requests. Die Liste ist sortiert nach dem Zeitstempel des Request-Eingangs.
 <5> Die URL der jeweiligen Requests.
-<6> Der HTTP-Status des Response auf einen internen Request.u
+<6> Der HTTP-Status des Response auf einen internen Request.
 <7> Ein optionaler Indikator, der angibt, wie viele interne Requests nicht in der `trace`-Liste aufgeführt wurden, da andernfalls die Maximallänge des Header-Werts überschritten worden wäre.
 ====
 
@@ -79,24 +79,24 @@ Der Filter kann wie folgt konfiguriert werden:
 [source,json]
 ----
 <filter>
-  <filter-name>durationfilter</filter-name>
-  <filter-class>com.github.kreutzr.restapifilters.durationfilter.DurationfilterFilter</filter-class>
+  <filter-name>durationtracefilter</filter-name>
+  <filter-class>com.github.kreutzr.restapifilters.durationtracefilter.DurationTraceFilter</filter-class>
   <init-param>
-    <param-name>durationfilter.header-name</param-name>
+    <param-name>durationtracefilter.header-name</param-name>
     <param-value>x-duration</param-value>
   </init-param>
   <init-param>
-    <param-name>durationfilter.active</param-name>
+    <param-name>durationtracefilter.active</param-name>
     <param-value>true</param-value>
   </init-param>
   <init-param>
-    <param-name>durationfilter.max-length</param-name>
+    <param-name>durationtracefilter.max-length</param-name>
     <param-value>16384</param-value>
   </init-param>
 </filter>
 
 <filter-mapping>
-  <filter-name>durationfilter</filter-name>
+  <filter-name>durationtracefilter</filter-name>
   <url-pattern>/*</url-pattern>
 </filter-mapping>
 ----
@@ -104,9 +104,9 @@ Der Filter kann wie folgt konfiguriert werden:
 
 [NOTE]
 ====
-* `durationfilter.header-name`: Der Name des Response-Headers kann mittels dieses Schlüssels verändert werden. Der Default ist "x-duration".
-* `durationfilter.active`: Mit diesem Konfigurationsparameter kann der Filter ein- (`true`) bzw. ausgeschaltet (`false`) werden. Der Default ist `true`. Der Filter ist ausgeschaltet, wenn ein beliebiger Wert anders als `true` (Die Groß-Kleinschreibung ist unerheblich) angegeben wird.
-* `durationfilter.max-length`: Über diesen Konfigurationsparameter kann die maximal zulässige Länge des Header-Werts angegeben werden. Der Default ist 16384 (= 16 K). Übersteigt die Länge des Response-Werts diesen Wert, so wird der letzte Eintrag der `trace`-Liste entfernt.
+* `durationtracefilter.header-name`: Der Name des Response-Headers kann mittels dieses Schlüssels verändert werden. Der Default ist "x-duration".
+* `durationtracefilter.active`: Mit diesem Konfigurationsparameter kann der Filter ein- (`true`) bzw. ausgeschaltet (`false`) werden. Der Default ist `true`. Der Filter ist ausgeschaltet, wenn ein beliebiger Wert anders als `true` (Die Groß-Kleinschreibung ist unerheblich) angegeben wird.
+* `durationtracefilter.max-length`: Über diesen Konfigurationsparameter kann die maximal zulässige Länge des Header-Werts angegeben werden. Der Default ist 16384 (= 16 K). Übersteigt die Länge des Response-Werts diesen Wert, so wird der letzte Eintrag der `trace`-Liste entfernt.
 ====
 
 

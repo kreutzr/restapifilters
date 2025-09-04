@@ -1,11 +1,13 @@
-package com.github.kreutzr.restapifilters.durationfilter;
+package com.github.kreutzr.restapifilters.durationtracefilter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-public class DurationServletFilterHandlerTest
+import com.github.kreutzr.restapifilters.durationtracefilter.DurationTraceFilterHandler;
+
+public class DurationTraceFilterHandlerTest
 {
   private void sleep( final long waitMs )
   {
@@ -34,7 +36,7 @@ public class DurationServletFilterHandlerTest
       final String originalSummary = null;
 
       // When
-      final DurationServletFilterHandler handler = new DurationServletFilterHandler( maxHeaderLength );
+      final DurationTraceFilterHandler handler = new DurationTraceFilterHandler( maxHeaderLength );
       sleep( 2000 );
       final String responseSummary = handler.updateResponseDurationHeader( outerUrl, null, originalSummary, httpstatus );
 
@@ -77,17 +79,17 @@ public class DurationServletFilterHandlerTest
       // ---> A ---> B
       //        ---> C ---> D
       // =====================
-      final DurationServletFilterHandler handlerA = new DurationServletFilterHandler( maxHeaderLength );
+      final DurationTraceFilterHandler handlerA = new DurationTraceFilterHandler( maxHeaderLength );
       sleep( 500 );  // Service A execution time begin
 
-      final DurationServletFilterHandler handlerB = new DurationServletFilterHandler( maxHeaderLength );
+      final DurationTraceFilterHandler handlerB = new DurationTraceFilterHandler( maxHeaderLength );
       sleep( 2000 ); // Service B execution time total
       final String responseSummaryB = handlerB.updateResponseDurationHeader( urlB, null,  null, httpstatus );
 
-      final DurationServletFilterHandler handlerC = new DurationServletFilterHandler( maxHeaderLength );
+      final DurationTraceFilterHandler handlerC = new DurationTraceFilterHandler( maxHeaderLength );
       sleep( 500 );  // Service C execution time begin
 
-      final DurationServletFilterHandler handlerD = new DurationServletFilterHandler( maxHeaderLength );
+      final DurationTraceFilterHandler handlerD = new DurationTraceFilterHandler( maxHeaderLength );
       sleep( 1000 ); // Service D execution time total
       final String responseSummaryD = handlerD.updateResponseDurationHeader( urlD, responseSummaryB, null, httpstatus );
 
