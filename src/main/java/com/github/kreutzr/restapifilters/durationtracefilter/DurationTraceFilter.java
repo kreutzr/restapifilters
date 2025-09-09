@@ -2,9 +2,9 @@ package com.github.kreutzr.restapifilters.durationtracefilter;
 
 import java.io.IOException;
 
-import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
+import jakarta.servlet.GenericFilter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
@@ -14,8 +14,9 @@ import jakarta.servlet.http.HttpServletResponse;
 /**
  * This filter allows to measure the request execution duration and to trace all inner requests as long as the passed custom duration header is passed over to all internal requests.
  */
-public class DurationTraceFilter implements Filter
+public class DurationTraceFilter extends GenericFilter
 {
+  private static final long   serialVersionUID               = -4599612059756903195L;
   private static final String CONFIGURATION_PARAMETER_PREFIX = "durationtracefilter";
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -30,6 +31,8 @@ public class DurationTraceFilter implements Filter
   public void init( final FilterConfig filterConfig )
   throws ServletException
   {
+    super.init( filterConfig );
+
     headerName_ = filterConfig.getInitParameter( CONFIGURATION_PARAMETER_PREFIX + ".header-name" );
     if (headerName_ == null || headerName_.isEmpty())
     {
