@@ -2,13 +2,25 @@
 <web-app id="Sample-App"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
-    http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-    version="2.5"
+    http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+    version="3.0"
     xmlns="http://java.sun.com/xml/ns/javaee">
 
   <filter>
     <filter-name>durationfilter</filter-name>
     <filter-class>com.github.kreutzr.restapifilters.durationfilter.DurationfilterFilter</filter-class>
+
+    <!-- NOTE:
+         Adjusting an outgoing response is only possible if the response was not yet committed. 
+         Unfortunately Spring MVC does commit synchronous responses immediately and thereby makes any "normal" filter chain useless. 
+         In Spring MVC the auto-commit is only deactivated for so called "asynchronous" requests. To make use of this request execution mode the filter must signal to support it.    
+         This implies that all configured filters need to be marked to support asynch request execution.
+         See: Section 17.3.4 "Asynchronous Request Processing" in (https://docs.spring.io/spring-framework/docs/3.2.x/spring-framework-reference/html/mvc.html)
+         NOTE:
+         The "asynch-supported" configuration parameter is introduced in version 3.0 of the web-app XSD ("web-app_3_0.xsd").
+    -->
+    <async-supported>true</async-supported>
+
     <init-param>
       <param-name>durationfilter.header-name</param-name>
       <param-value>x-duration</param-value>
