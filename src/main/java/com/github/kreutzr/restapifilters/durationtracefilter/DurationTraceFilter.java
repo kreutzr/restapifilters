@@ -10,6 +10,7 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponseWrapper;
 
 /**
  * This filter allows to measure the request execution duration and to trace all inner requests as long as the passed custom duration header is passed over to all internal requests.
@@ -61,15 +62,17 @@ public class DurationTraceFilter extends GenericFilter
       return;
     }
 
+    // Allow adding or adjusting of headers after the response was finished (and perhaps committed) by the service (controller).
+    final HttpServletResponseWrapper httpResponse = new HttpServletResponseWrapper( (HttpServletResponse)response );
+
     // Perform response header calculation if active.
     final DurationTraceFilterHandler handler = new DurationTraceFilterHandler( maxHeaderLength_ );
     try {
       // Proceed with filter chain and let request be executed
-      chain.doFilter( request, response );
+      chain.doFilter( request, httpResponse );
     }
     finally {
       final HttpServletRequest  httpRequest  = (HttpServletRequest)  request;
-      final HttpServletResponse httpResponse = (HttpServletResponse) response;
 
       httpResponse.setHeader( headerName_, handler.updateResponseDurationHeader(
         httpRequest.getRequestURL().toString(),
